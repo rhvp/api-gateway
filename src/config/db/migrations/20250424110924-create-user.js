@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    queryInterface.createTable('tbl_tenant', {
+    queryInterface.createTable('tbl_user', {
       id: {
         autoIncrement: false,
         primaryKey: true,
@@ -15,10 +15,29 @@ module.exports = {
         type: Sequelize.STRING(200),
         allowNull: false
       },
-      key: {
+      email: {
         type: Sequelize.STRING(200),
+        allowNull: false
+      },
+      password: {
+        type: Sequelize.STRING(200),
+        allowNull: false
+      },
+      tenant_id: {
+        type: Sequelize.UUID,
         allowNull: false,
-        unique: true,
+        references: {
+          model: 'tbl_tenant',
+          key: 'id'
+        }
+      },
+      role_id: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: 'tbl_role',
+          key: 'id'
+        }
       },
       created_at: Sequelize.DATE,
       updated_at: Sequelize.DATE,
@@ -26,6 +45,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    queryInterface.dropTable('tbl_tenant');
+    queryInterface.dropTable('tbl_user');
   }
 };

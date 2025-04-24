@@ -1,23 +1,30 @@
-import { sequelize } from "config/db"
+import { sequelize } from "../../config/db"
 import { RoleInstance } from "./base"
 import { DataTypes } from "sequelize"
+import PermissionModel from "./permission"
 
 
 const RoleModel = sequelize.define<RoleInstance>(
-    'role',
+    'tbl_role',
     {
       id: {
           primaryKey: true,
           type: DataTypes.UUID,
           unique: true,
-          defaultValue: DataTypes.UUIDV4
+          defaultValue: DataTypes.UUIDV4,
       },
       name: DataTypes.STRING,
+      tenant_id: DataTypes.UUID
     },
     {
         freezeTableName: true,
         underscored: true
     }
 )
+
+RoleModel.hasMany(PermissionModel, {
+    as: "permissions",
+    foreignKey: "role_id"
+})
 
 export default RoleModel

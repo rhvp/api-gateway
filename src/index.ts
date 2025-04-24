@@ -1,9 +1,7 @@
-import * as dotenv from 'dotenv';
+import { env_var } from './config/env/env';
 import { app } from './app';
 
-dotenv.config();
-
-const port: any = process.env.PORT || 5000;
+const port = env_var.PORT;
 
 app.listen(port, ()=>{
     console.info(`App running on Port: ${port}`);

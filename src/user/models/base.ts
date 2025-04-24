@@ -1,4 +1,5 @@
 import { Model } from "sequelize";
+import z from "zod";
 
 export interface BaseAttributes {
     created_at?: Date;
@@ -20,12 +21,13 @@ export interface User extends BaseAttributes {
     email: string;
     password: string;
     tenant_id: string;
+    role_id: string;
 }
 export interface UserAttributes extends Omit<User, 'id'> {}
 export interface UserInstance extends Model<User, UserAttributes>, User {}
 
 
-export interface Permission {
+export interface RolePermission {
     id: string;
     resource_name: string;
     role_id: string;
@@ -35,13 +37,39 @@ export interface Permission {
     can_delete: boolean;
     secondary_privileges: string[];
 }
-export interface PermissionAttributes extends Omit<Permission, 'id'|'secondary_privileges'> {}
-export interface PermissionInstance extends Model<Permission, PermissionAttributes>, Permission {}
+export interface PermissionAttributes extends Omit<RolePermission, 'id'|'secondary_privileges'> {}
+export interface PermissionInstance extends Model<RolePermission, PermissionAttributes>, RolePermission {}
 
-
-export interface Role {
+export interface Role extends BaseAttributes {
     id: string;
     name: string;
+    tenant_id: string;
+    permissions?: RolePermission[];
 }
 export interface RoleAttributes extends Omit<Role, 'id'> {}
 export interface RoleInstance extends Model<Role, RoleAttributes>, Role {}
+
+
+export interface UserSignup {
+    name: string;
+    email: string;
+    password: string;
+    tenant_id: string;
+}
+
+export interface UserLogin {
+    email: string;
+    password: string;
+    tenant_id: string;
+}
+
+export const loginSchema = z.object({
+    email: z.string().email(),
+    password: z.string(),
+})
+
+export const signupSchema = z.object({
+    name: z.string(),
+    email: z.string().email(),
+    password: z.string().min(8),
+})

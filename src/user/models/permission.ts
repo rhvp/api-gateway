@@ -1,10 +1,12 @@
-import { sequelize } from "config/db"
+import { sequelize } from "../../config/db"
 import { PermissionInstance } from "./base"
 import { DataTypes } from "sequelize"
 
 
+
+
 const PermissionModel = sequelize.define<PermissionInstance>(
-    'role_permission',
+    'tbl_role_permission',
     {
       id: {
           primaryKey: true,
@@ -22,7 +24,7 @@ const PermissionModel = sequelize.define<PermissionInstance>(
     },
     {
         freezeTableName: true,
-        underscored: true
+        timestamps: false
     }
 )
 

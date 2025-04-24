@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    queryInterface.createTable('tbl_tenant', {
+    queryInterface.createTable('tbl_role', {
       id: {
         autoIncrement: false,
         primaryKey: true,
@@ -15,10 +15,13 @@ module.exports = {
         type: Sequelize.STRING(200),
         allowNull: false
       },
-      key: {
-        type: Sequelize.STRING(200),
+      tenant_id: {
+        type: Sequelize.UUID,
         allowNull: false,
-        unique: true,
+        references: {
+          model: 'tbl_tenant',
+          key: 'id'
+        }
       },
       created_at: Sequelize.DATE,
       updated_at: Sequelize.DATE,
@@ -26,6 +29,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    queryInterface.dropTable('tbl_tenant');
+    queryInterface.dropTable('tbl_role');
   }
 };

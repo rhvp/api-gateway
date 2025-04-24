@@ -1,10 +1,10 @@
-import { sequelize } from "config/db"
+import { sequelize } from "../../config/db"
 import { TenantInstance } from "./base"
 import { DataTypes } from "sequelize"
 
 
 const TenantModel = sequelize.define<TenantInstance>(
-    'tenant',
+    'tbl_tenant',
     {
       id: {
           primaryKey: true,

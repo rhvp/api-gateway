@@ -1,11 +1,8 @@
-import * as dotenv from 'dotenv';
-dotenv.config();
 import { Options, Sequelize } from 'sequelize';
 import db_config_opts from './config';
+import { env_var } from '../env/env';
 
-let env = process.env.NODE_ENV || "development";
-
-const db_config:Options = db_config_opts[env]
+const db_config:Options = db_config_opts[env_var.NODE_ENV];
 
 let sequelize = new Sequelize(db_config.database as string, db_config.username as string, db_config.password as string, db_config);
 
