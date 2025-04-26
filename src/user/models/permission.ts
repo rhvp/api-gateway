@@ -1,11 +1,11 @@
 import { sequelize } from "../../config/db"
-import { PermissionInstance } from "./base"
+import { BaseRepository, PermissionInstance } from "./base"
 import { DataTypes } from "sequelize"
 
 
 
 
-const PermissionModel = sequelize.define<PermissionInstance>(
+export const PermissionModel = sequelize.define<PermissionInstance>(
     'tbl_role_permission',
     {
       id: {
@@ -28,4 +28,10 @@ const PermissionModel = sequelize.define<PermissionInstance>(
     }
 )
 
-export default PermissionModel
+class PermissionRepository extends BaseRepository {
+    constructor() {
+        super(PermissionModel)
+    }
+}
+
+export default PermissionRepository

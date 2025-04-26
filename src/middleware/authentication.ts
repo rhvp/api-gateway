@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { ForbiddenException, NotFoundException, UnauthorizedException } from "../shared/error/builder";
 import { jwtService } from "../shared/jwt";
 import { RolePermission, User } from "../user/models/base";
-import UserModel from "../user/models/user";
-import TenantModel from "../user/models/tenant";
+import UserRepository from "../user/models/user";
+import TenantRepository from "../user/models/tenant";
 
 
 declare global {
@@ -17,7 +17,12 @@ declare global {
 }
 
 
-class AuthService {
+export class AuthService {
+    constructor(
+        private readonly userRepo:UserRepository,
+        private readonly tenantRepo:TenantRepository
+    ) {}
+
     authenticate = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const authHeader = req.headers.authorization;
@@ -33,7 +38,7 @@ class AuthService {
 
             if(decodedToken.tenantId !== req.tenantId) throw new ForbiddenException("Invalid tenant user");
 
-            const user = await UserModel.findOne({ where: { id: decodedToken.userId} });
+            const user = await this.userRepo.findOne( { id: decodedToken.userId} );
 
             if (!user) throw new NotFoundException("Invalid user");
 
@@ -53,7 +58,7 @@ class AuthService {
     
             if (!tenantKey) throw new UnauthorizedException('Tenant key is required');
             
-            const tenant = await TenantModel.findOne({ where: { key: tenantKey } });
+            const tenant = await this.tenantRepo.findOne( { key: tenantKey } );
             
             if (!tenant) throw new UnauthorizedException('Invalid tenant key');
             
@@ -90,4 +95,7 @@ class AuthService {
     }
 }
 
-export const authService = new AuthService();
+export const authService = new AuthService(
+    new UserRepository,
+    new TenantRepository
+);

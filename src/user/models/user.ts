@@ -1,11 +1,9 @@
 import { sequelize } from "../../config/db"
-import { UserInstance } from "./base"
+import { BaseRepository, UserInstance } from "./base"
 import { DataTypes } from "sequelize"
-import TenantModel from "./tenant"
-import RoleModel from "./role"
 
 
-const UserModel = sequelize.define<UserInstance>(
+export const UserModel = sequelize.define<UserInstance>(
     'tbl_user',
     {
         id: {
@@ -32,4 +30,10 @@ UserModel.prototype.toJSON = function () {
     return values;
 }
 
-export default UserModel
+class UserRepository extends BaseRepository {
+    constructor() {
+        super(UserModel)
+    }
+}
+
+export default UserRepository

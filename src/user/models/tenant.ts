@@ -1,9 +1,9 @@
 import { sequelize } from "../../config/db"
-import { TenantInstance } from "./base"
+import { BaseRepository, TenantInstance } from "./base"
 import { DataTypes } from "sequelize"
 
 
-const TenantModel = sequelize.define<TenantInstance>(
+export const TenantModel = sequelize.define<TenantInstance>(
     'tbl_tenant',
     {
       id: {
@@ -21,4 +21,10 @@ const TenantModel = sequelize.define<TenantInstance>(
     }
 )
 
-export default TenantModel
+class TenantRepository extends BaseRepository {
+    constructor() {
+        super(TenantModel)
+    }
+}
+
+export default TenantRepository

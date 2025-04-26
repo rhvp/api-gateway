@@ -1,10 +1,10 @@
 import { sequelize } from "../../config/db"
-import { RoleInstance } from "./base"
+import { BaseRepository, RoleInstance } from "./base"
 import { DataTypes } from "sequelize"
-import PermissionModel from "./permission"
+import {PermissionModel} from "./permission"
 
 
-const RoleModel = sequelize.define<RoleInstance>(
+export const RoleModel = sequelize.define<RoleInstance>(
     'tbl_role',
     {
       id: {
@@ -27,4 +27,10 @@ RoleModel.hasMany(PermissionModel, {
     foreignKey: "role_id"
 })
 
-export default RoleModel
+class RoleRepository extends BaseRepository {
+    constructor() {
+        super(RoleModel)
+    }
+}
+
+export default RoleRepository

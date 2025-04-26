@@ -1,31 +1,36 @@
 import { ConflictException, ForbiddenException, NotFoundException, ServiceUnavailableException, UnauthorizedException, UnprocessableEntityException } from "../shared/error/builder";
 import { OauthLogin, Tenant, UserLogin, UserSignup } from "./models/base";
-import UserModel from "./models/user";
-import bcrypt, { genSaltSync } from 'bcryptjs';
-import RoleModel from "./models/role";
 import { jwtService, TokenPayload } from "../shared/jwt";
-import TenantModel from "./models/tenant";
 import { googleAuth } from "../shared/auth/google";
+import UserRepository from "./models/user";
+import RoleRepository from "./models/role";
+import TenantRepository from "./models/tenant";
+import { crypt } from "../shared/crypt";
 
-class UserService {
+export class UserService {
+
+    constructor(
+        private readonly userRepository:UserRepository,
+        private readonly roleRepository:RoleRepository,
+        private readonly tenantRepository:TenantRepository,
+    ) {}
+
 
     signup = async (data: UserSignup) => {
         let {email, tenant_id} = data;
 
-        const existingUser = await UserModel.findOne({where: {email}});
+        const existingUser = await this.userRepository.findOne({email});
         if (existingUser) throw new ConflictException('User already exists');
 
         const tenant = await this.validateTenant(tenant_id);
 
-        const hashedPassword = await bcrypt.hash(data.password, genSaltSync(10));
+        const hashedPassword = await crypt.hashPassword(data.password);
 
-        const defaultRole = await RoleModel.findOne({
-            where: { name: 'default', tenant_id: tenant.id }
-        });
+        const defaultRole = await this.roleRepository.findOne( { name: 'default', tenant_id: tenant.id });
 
         if (!defaultRole) throw new ForbiddenException('Invalid tenant role setup');
 
-        const user = await UserModel.create({
+        const user = await this.userRepository.create({
             ...data,
             password: hashedPassword,
             role_id: defaultRole.id,
@@ -38,15 +43,15 @@ class UserService {
     login = async (data:UserLogin) => {
         const {email, password, tenant_id} = data;
 
-        const user = await UserModel.findOne({where: {email, tenant_id}});
+        const user = await this.userRepository.findOne({email, tenant_id});
 
         if (!user) throw new NotFoundException('User not found');
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await crypt.compareHash(password, user.password);
 
         if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
 
-        const role = await RoleModel.findOne({where: {id: user.role_id}, include: ['permissions']});
+        const role = await this.roleRepository.findOne({id: user.role_id}, {include: ['permissions']});
 
         let tokenPayload:TokenPayload = {
             userId: user.id,
@@ -80,11 +85,11 @@ class UserService {
 
         const {email, name} = userData;
 
-        let user = await UserModel.findOne({where: { email, tenant_id}});
+        let user = await this.userRepository.findOne({ email, tenant_id});
 
         if(!user) user = await this.createOauthUser(name, email, tenant);
 
-        const role = await RoleModel.findOne({where: {id: user.role_id}, include: ['permissions']});
+        const role = await this.roleRepository.findOne({id: user.role_id}, {include: ['permissions']});
 
         let tokenPayload:TokenPayload = {
             userId: user.id,
@@ -103,7 +108,7 @@ class UserService {
     }
 
     private validateTenant = async (tenant_id: string) => {
-        const tenant = await TenantModel.findByPk(tenant_id);
+        const tenant = await this.tenantRepository.findById(tenant_id);
         if (!tenant) throw new NotFoundException('Invalid tenant');
         return tenant;
     }
@@ -111,15 +116,14 @@ class UserService {
 
     private createOauthUser = async (name:string, email:string, tenant:Tenant) => {
         let defaultPass = Math.random().toString(36).slice(-10);
-        let hash = await bcrypt.hash(defaultPass, genSaltSync(10));
 
-        const role = await RoleModel.findOne({
-            where: { name: 'default', tenant_id: tenant.id }
-        });
+        let hash = await crypt.hashPassword(defaultPass);
+
+        const role = await this.roleRepository.findOne({ name: 'default', tenant_id: tenant.id });
 
         if (!role) throw new ForbiddenException('Invalid tenant role setup');
 
-        const user = await UserModel.create({
+        const user = await this.userRepository.create({
             name,
             email,
             password: hash,
@@ -131,4 +135,8 @@ class UserService {
     }
 }
 
-export const userService = new UserService();
+export const userService = new UserService(
+    new UserRepository,
+    new RoleRepository,
+    new TenantRepository
+);
