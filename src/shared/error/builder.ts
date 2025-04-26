@@ -64,3 +64,9 @@ export class MethodNotAllowedException extends AppError {
         super(message, HttpStatusCode.MethodNotAllowed);
     }
 }
+
+export class UnprocessableEntityException extends AppError {
+    constructor(message = 'Unprocessable entity') {
+        super(message, HttpStatusCode.UnprocessableEntity);
+    }
+}

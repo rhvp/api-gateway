@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ForbiddenException, NotFoundException, UnauthorizedException } from "../shared/error/builder";
 import { jwtService } from "../shared/jwt";
-import { Logger } from "../shared/logger";
-import { User } from "../user/models/base";
+import { RolePermission, User } from "../user/models/base";
 import UserModel from "../user/models/user";
 import TenantModel from "../user/models/tenant";
 
@@ -11,15 +10,14 @@ declare global {
     namespace Express {
         interface Request {
             user: User;
-            tenantId: string
+            tenantId: string;
+            permissions: RolePermission[]
         }
     }
 }
 
 
 class AuthService {
-    private readonly logger = new Logger(AuthService.name);
-
     authenticate = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const authHeader = req.headers.authorization;
@@ -40,6 +38,7 @@ class AuthService {
             if (!user) throw new NotFoundException("Invalid user");
 
             req.user = user;
+            req.permissions = decodedToken.permissions
 
             next();
         } catch (error) {
@@ -50,11 +49,11 @@ class AuthService {
 
     checkTenant = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const tenantApiKey = req.headers['x-tenant-key'] as string;
+            const tenantKey = req.headers['x-tenant-key'] as string;
     
-            if (!tenantApiKey) throw new UnauthorizedException('Tenant key is required');
+            if (!tenantKey) throw new UnauthorizedException('Tenant key is required');
             
-            const tenant = await TenantModel.findOne({ where: { key: tenantApiKey } });
+            const tenant = await TenantModel.findOne({ where: { key: tenantKey } });
             
             if (!tenant) throw new UnauthorizedException('Invalid tenant key');
             
@@ -63,6 +62,30 @@ class AuthService {
             next();
         } catch (error) {
             next(error);
+        }
+    }
+
+
+    authorize = ( resource: string, permission: string ) => {
+        return async (req: Request, res: Response, next: NextFunction) => {
+            try {
+                const userPermissions = req.permissions;
+
+                if(!userPermissions?.length) throw new UnauthorizedException("Unauthorized access");
+
+                const requiredPermission = userPermissions.find(up => {
+                    return up.resource_name === resource
+                });
+
+                if(!requiredPermission) throw new UnauthorizedException("Unauthorized access");
+
+                if(!requiredPermission[permission] && !requiredPermission.secondary_privileges?.includes(permission)) throw new UnauthorizedException("Unauthorized access");
+
+                return next();
+            } catch (error) {
+                return next(error);
+            }
+            
         }
     }
 }

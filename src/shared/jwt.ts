@@ -1,4 +1,3 @@
-
 import jwt from 'jsonwebtoken';
 import { env_var } from '../config/env/env';
 import { RolePermission } from '../user/models/base';

@@ -63,13 +63,27 @@ export interface UserLogin {
     tenant_id: string;
 }
 
+export interface OauthLogin {
+    code: string;
+    tenant_id: string;
+}
+
 export const loginSchema = z.object({
     email: z.string().email(),
     password: z.string(),
+})
+
+export const oauthSchema = z.object({
+    code: z.string(),
 })
 
 export const signupSchema = z.object({
     name: z.string(),
     email: z.string().email(),
     password: z.string().min(8),
+})
+
+export const productSchema = z.object({
+    name: z.string(),
+    price: z.number(),
 })

@@ -1,7 +1,5 @@
-// src/services/loggingService.ts
-import winston from 'winston';
+import * as winston from 'winston';
 import { env_var } from '../config/env/env';
-// import config from '../config/app';
 
 const { format, transports } = winston;
 
@@ -11,7 +9,6 @@ export class Logger {
 
     constructor(context: string) {
         this.logger = winston.createLogger({
-            // level: this.level(),
             format: format.combine(
                 format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
                 format.errors({ stack: true }),
@@ -20,7 +17,6 @@ export class Logger {
             ),
             defaultMeta: { context },
             transports: [
-                // Write all logs to console
                 new transports.Console({
                     format: format.combine(
                         format.colorize(),

@@ -1,5 +1,5 @@
 import { Options, Sequelize } from 'sequelize';
-import db_config_opts from './config';
+import * as db_config_opts from './config';
 import { env_var } from '../env/env';
 
 const db_config:Options = db_config_opts[env_var.NODE_ENV];

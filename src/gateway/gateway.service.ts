@@ -1,20 +1,19 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { Method } from "axios";
 import { GatewayServiceName, GatewayServiceFactory } from "../config/constants/services";
-import { NotFoundException, MethodNotAllowedException, InternalServerException, ServiceUnavailableException } from "../shared/error/builder";
+import { NotFoundException, MethodNotAllowedException, ServiceUnavailableException } from "../shared/error/builder";
 import { Logger } from "../shared/logger";
-import { log } from "winston";
 
 export interface ServiceRoutingOptions {
     service_name: GatewayServiceName;
     route_key: string;
     method: Method;
+    tenant_id: string;
     params?: any;
     query?: any;
     body?: any;
     headers?: any;
     user_id?: string;
-    tenant_id?: string;
 }
 
 

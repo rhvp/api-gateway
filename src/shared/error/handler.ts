@@ -4,7 +4,8 @@ import { Logger } from "../../shared/logger";
 
 export const errorHandler = (err: AppError, req: Request, res: Response, next: NextFunction) => {
 
-    new Logger('Error').error(err.message);
+    let logger = new Logger('AppError')
+    logger.error(err.stack);
 
     if (err.isOperational) {
         res.status(err.statusCode).json({

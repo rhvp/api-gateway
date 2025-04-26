@@ -32,15 +32,16 @@ class GatewayController {
                 headers: {
                     ...req.headers,
                 },
-                user_id: <string>req.headers["x-user-id"],
-                tenant_id: <string>req.headers["x-tenant-id"],
+                user_id: req.user.id,
+                tenant_id: req.tenantId,
             };
     
             const response = await gatewayService.routeToService(payload);
 
-            Object.keys(response.headers).forEach((key) => {
-                res.setHeader(key, response.headers[key]);
-            });
+            // Object.keys(response.headers).forEach((key) => {
+            //     res.setHeader(key, response.headers[key]);
+            // });
+            this.setResponseHeaders(response, res);
     
             res.status(response.status).json({
                 status: response.status,
@@ -65,15 +66,13 @@ class GatewayController {
                 headers: {
                     ...req.headers,
                 },
-                user_id: <string>req.headers["x-user-id"],
-                tenant_id: <string>req.headers["x-tenant-id"],
+                user_id: req.user.id,
+                tenant_id: req.tenantId,
             };
     
             const response = await gatewayService.routeToService(payload);
 
-            Object.keys(response.headers).forEach((key) => {
-                res.setHeader(key, response.headers[key]);
-            });
+            this.setResponseHeaders(response, res);
     
             res.json({
                 status: response.status,

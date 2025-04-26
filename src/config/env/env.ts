@@ -17,12 +17,15 @@ interface env {
     JWT_EXPIRES_IN: string;
     RATE_LIMIT_WINDOW_MINS: number;
     RATE_LIMIT_REQUEST_COUNT: number;
+    GOOGLE_CLIENT_ID: string;
+    GOOGLE_CLIENT_SECRET: string;
+    GOOGLE_REDIRECT_URL: string
 }
 
 export const env_var:env = {
     NODE_ENV: process.env.NODE_ENV || "development",
     DB_HOST: process.env.DB_HOST || "127.0.0.1",
-    DB_NAME: process.env.DB_NAME || "api_gateway",
+    DB_NAME: process.env.DB_NAME || "api_gateway_db",
     DB_PORT: <string>process.env.DB_PORT,
     DB_PASSWORD: <string>process.env.DB_PASSWORD,
     DB_USER: <string>process.env.DB_USER,
@@ -34,5 +37,8 @@ export const env_var:env = {
     JWT_SECRET: <string>process.env.JWT_SECRET,
     JWT_EXPIRES_IN: <string>process.env.JWT_EXPIRES_IN || "1h",
     RATE_LIMIT_WINDOW_MINS: parseInt(<string>process.env.RATE_LIMIT_WINDOW_MINS) || 1,
-    RATE_LIMIT_REQUEST_COUNT: parseInt(<string>process.env.RATE_LIMIT_WINDOW_MINS) || 30,
+    RATE_LIMIT_REQUEST_COUNT: parseInt(<string>process.env.RATE_LIMIT_WINDOW_MINS) || 5,
+    GOOGLE_CLIENT_ID: <string>process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: <string>process.env.GOOGLE_CLIENT_SECRET,
+    GOOGLE_REDIRECT_URL: <string>process.env.GOOGLE_REDIRECT_URL,
 }

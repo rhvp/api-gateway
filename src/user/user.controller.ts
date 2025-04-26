@@ -1,6 +1,6 @@
 import { HttpStatusCode } from "axios";
 import { NextFunction, Request, Response } from "express";
-import { UserLogin, UserSignup } from "./models/base";
+import { OauthLogin, UserLogin, UserSignup } from "./models/base";
 import { userService } from "./user.service";
 
 
@@ -16,6 +16,28 @@ class UserController {
             }
 
             const result = await userService.login(payload);
+
+            res.status(200).json({
+                success: true,
+                message: 'Authentication successful',
+                data: result
+            });
+        } catch (error) {
+            return next(error);
+        }
+    }
+
+
+    oathLogin = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const code = <string>req.query.code;
+
+            let payload:OauthLogin = {
+                code,
+                tenant_id: req.tenantId
+            }
+
+            const result = await userService.oathLogin(payload);
 
             res.status(200).json({
                 success: true,
