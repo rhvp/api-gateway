@@ -38,9 +38,6 @@ class GatewayController {
     
             const response = await gatewayService.routeToService(payload);
 
-            // Object.keys(response.headers).forEach((key) => {
-            //     res.setHeader(key, response.headers[key]);
-            // });
             this.setResponseHeaders(response, res);
     
             res.status(response.status).json({

@@ -1,6 +1,6 @@
 ## Description
 
-API Gateway and Authentication Service
+API Gateway and Authentication Service for multi-tenant system
 
 ## Installation
 
@@ -41,7 +41,7 @@ $ npm run test
 
 ## Instructions
 
-Follow the steps above to setup and bootstrap the app. 
+- Follow the steps above to setup and bootstrap the app. 
 - Default tenants and roles are seeded in the db after successfully following the migration and seeding steps.
 - All API requests require `x-tenant-key` header to identify the source tenant.
 - Service API requests require a Bearer access token as well as the `x-tenant-key` header property.
@@ -51,7 +51,7 @@ Follow the steps above to setup and bootstrap the app.
 - The Oauth2 login architecture is designed to initiate the handshake between the client (frontend) tenant application 
 and the google oauth server. 
 - The frontend then receives a code after the user authenticates, which it forwards to the 
-service Authentication endpoint along with the respective tenant key. 
+backend Authentication endpoint along with the respective tenant key. 
 - The backend completes the Oauth process by validating the code and fetching the 
 authenticated user profile details. The user is then loggedin directly if exists or is automatically signed up if doesn't exist.
 - A default rate-limit of 5 requests per minute per IP is set to easily test the rate-limiting feature.
