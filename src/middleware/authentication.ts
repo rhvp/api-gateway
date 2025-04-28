@@ -32,7 +32,7 @@ export class AuthService {
             }
 
             const token = authHeader.split(' ')[1];
-            const decodedToken = jwtService.decodeToken(token);
+            const decodedToken = jwtService.verifyToken(token);
 
             if (!decodedToken) throw new UnauthorizedException('Invalid or expired token');
 

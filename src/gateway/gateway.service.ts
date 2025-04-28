@@ -13,7 +13,7 @@ export interface ServiceRoutingOptions {
     query?: any;
     body?: any;
     headers?: any;
-    user_id?: string;
+    user_id: string;
 }
 
 
