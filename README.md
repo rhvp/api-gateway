@@ -46,6 +46,7 @@ $ npm run test
 - Default tenants and roles are seeded in the db after successfully following the migration and seeding steps.
 - New users are registered using the Signup endpoint and the tenant default role is assigned to the user.
 - All API requests require `x-tenant-key` header to identify the source tenant.
+- The `x-tenant-key` can be gotten from the model's `key` property.
 - Service API requests require a Bearer access token as well as the `x-tenant-key` header property.
 - There are two micro-services setup on the application. 
 - The default roles only permit read access to the services.
