@@ -42,6 +42,7 @@ $ npm run test
 ## Instructions
 
 - Follow the steps above to setup and bootstrap the app. 
+- Setup the .env file based on the env configuration format that can be found in /src/config/env.
 - Default tenants and roles are seeded in the db after successfully following the migration and seeding steps.
 - All API requests require `x-tenant-key` header to identify the source tenant.
 - Service API requests require a Bearer access token as well as the `x-tenant-key` header property.
