@@ -35,7 +35,7 @@ $ npm run start:dev
 $ npm run test
 ```
 
-## Documentation
+## API Documentation
 
 `https://documenter.getpostman.com/view/7534999/2sB2j1gXBe`
 
